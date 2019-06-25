@@ -816,6 +816,7 @@ var alamode = {
         htmlElement = o["html_element"] || "body",
         title = o["title"] || queryName,
         height = o["height"] || "300",
+        colors = o["colors"] || ['#EE8D24', '#43A5DA', '#6AB328', '#BB60F8', '#E14459', '#EAD022', '#06D0AD', '#DB38B7'];
         width = o["width"] || "500";
 
     var data = alamode.getDataFromQuery(queryName);
@@ -842,7 +843,7 @@ var alamode = {
 
     var options = {
       label: { format: '{l}: {f}', },
-      block: { dynamicHeight: true },
+      block: { dynamicHeight: true, fill: { scale: colors } },
       chart: { bottomPinch: 1 },
       animation: 100
     };
