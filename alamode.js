@@ -2915,7 +2915,7 @@ var alamode = {
         }
      }, 100);
   },
-  
+
   xAnnotations: function(o){
     var chartId      = o["chart_id"],
         xValues      = o["comment_values"],
@@ -2924,27 +2924,27 @@ var alamode = {
         isDate       = o["is_date"] || false;
 
     setTimeout(function() {
-      
+
       var highchartContainer = $("#" + chartId).find("div.highcharts-container")[0],
           highchartId = highchartContainer.id;
-      
+
       var charts = Highcharts.charts;
           chart = charts.filter(function(c) { if (c) { return c.container.id == highchartId;}; })[0];
           data = chart.series[0].data;
-      
+
       if (isDate) {
         for (i = 0; i < xValues.length; i++) {
           xValues[i] = new Date (xValues[i]).getTime();
         }
       }
-      
-      var points = data.filter(function(d) { if (d) { return xValues.indexOf(d.category) >= 0;}; }); 
-         
+
+      var points = data.filter(function(d) { if (d) { return xValues.indexOf(d.category) >= 0;}; });
+
       function addAnnotation(chart) {
         for (i = 0; i < points.length; i++) {
           var point = points[i];
           var color = commentColor[i] || point.color || "#FCFCFC";
-          
+
           var text = chart.renderer.label(
               comments[i],
               point.plotX + chart.plotLeft,
@@ -2958,7 +2958,7 @@ var alamode = {
               "stroke-width": 1,
               "radius": 10,
               "zIndex": 4
-            }).add();      
+            }).add();
         }
       }
 
@@ -2970,5 +2970,50 @@ var alamode = {
         }
       });
     }, 250);
+  },
+
+  // Custom Patreon functions
+  addHoverableAnnotation: function(o) {
+    const chartId = o["chart_id"]
+    const annotation = o["annotation"]
+
+    // create a div with the annotation in it
+    var annotationHTML = "<div>" + annotation + "</div>"
+
+    // grab the chart reference
+    var highchartContainer = $("#" + chartId).find("div.highcharts-container")[0];
+    var highchartId = highchartContainer.id;
+    var charts = Highcharts.charts;
+    chart = charts.filter(function(c) {
+      if (c) {
+        return c.container.id == highchartId;
+      };
+    })[0];
+
+    // put the label reference in function scope so that it can be removed
+    let annotationRef;
+
+    function addAnnotation(chartId, annotation) {
+      annotationRef = chart.renderer.label(annotationHTML, chart.chartWidth / 2, 0, "rect", _, _, true)
+        .attr({
+          "fill": '#FCFCFC',
+          "stroke": '#000000',
+          "stroke-width": 1,
+          // "radius": 10,
+          "zIndex": 4
+        })
+        .add();
+    }
+
+    function removeAnnotation() {
+      annotationRef.hide()
+    }
+
+    $("#" + chartId).on("mouseenter", function() {
+      addAnnotation(chartId, annotationRef);
+    });
+    $("#" + chartId).on("mouseleave", function() {
+      removeAnnotation();
+    });
   }
 }
